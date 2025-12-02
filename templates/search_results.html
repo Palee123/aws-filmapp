@@ -1,23 +1,65 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h3>{{ 'Keresési eredmények' if lang=='hu' else 'Search results' }}</h3>
+<h3 class="fw-bold text-center mb-4">
+    {{ 'Keresési eredmények' if lang=='hu' else 'Search Results' }}
+</h3>
 
-<div class="row">
-    {% for m in results %}
-        <div class="col-md-3 mb-4">
-            <div class="card">
-                {% if m.poster_path %}
-                    <img src="{{ image_base }}{{ m.poster_path }}" class="card-img-top">
-                {% endif %}
-                <div class="card-body">
-                    <h5 class="card-title">{{ m.title }}</h5>
-                    <a href="{{ url_for('main.movie_details', movie_id=m.id) }}"
-                       class="btn btn-primary">{{ 'Részletek' if lang=='hu' else 'Details' }}</a>
+{% if results|length == 0 %}
+    <p class="text-center fs-5 text-muted">
+        {{ 'Nincs találat.' if lang=='hu' else 'No results found.' }}
+    </p>
+{% else %}
+
+<!-- FILM GRID -->
+<div class="row g-4">
+
+    {% for movie in results %}
+    <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+
+        <a href="{{ url_for('main.movie_details', movie_id=movie.id) }}"
+           class="text-decoration-none text-dark">
+
+            <div class="card h-100 shadow-sm border-0 movie-card">
+
+                {% if movie.poster_path %}
+                <img src="{{ image_base }}{{ movie.poster_path }}"
+                     class="card-img-top"
+                     alt="{{ movie.title }}">
+                {% else %}
+                <div class="d-flex align-items-center justify-content-center bg-light"
+                     style="height: 260px; font-size: 14px;">
+                    {{ 'Nincs kép' if lang=='hu' else 'No image' }}
                 </div>
+                {% endif %}
+
+                <div class="card-body">
+                    <h6 class="card-title fw-bold small text-center">
+                        {{ movie.title }}
+                    </h6>
+                </div>
+
             </div>
-        </div>
+
+        </a>
+
+    </div>
     {% endfor %}
+
 </div>
+
+{% endif %}
+
+<style>
+/* Hover animáció */
+.movie-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.movie-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+</style>
 
 {% endblock %}

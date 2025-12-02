@@ -1,32 +1,65 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h3>{{ 'Értékeléseim' if lang=='hu' else 'My Ratings' }}</h3>
+<h2 class="fw-bold mb-4">
+    {{ 'Értékeléseim' if lang=='hu' else 'My Ratings' }}
+</h2>
 
-<div class="row">
-{% for item in movie_data %}
-    <div class="col-md-3 mb-4">
-        <div class="card">
-            {% if item.movie.poster_path %}
-                <img src="{{ image_base }}{{ item.movie.poster_path }}" class="card-img-top">
-            {% endif %}
-            <div class="card-body">
-                <h5>{{ item.movie.title }}</h5>
-                <p>{{ 'Értékelés:' if lang=='hu' else 'Rating:' }} {{ item.rating }}</p>
+<!-- Ha nincs értékelés -->
+{% if movie_data|length == 0 %}
+<div class="alert alert-info text-center py-4">
+    {{ 'Még nem értékeltél egy filmet sem.' if lang=='hu'
+       else 'You have not rated any movies yet.' }}
+</div>
+{% endif %}
 
-                <a href="{{ url_for('main.movie_details', movie_id=item.movie.id) }}"
-                   class="btn btn-primary">
-                    {{ 'Részletek' if lang=='hu' else 'Details' }}
-                </a>
+<!-- GRID -->
+<div class="row g-4">
 
-                <a href="{{ url_for('user.remove_rating', movie_id=item.movie.id) }}"
-                   class="btn btn-danger mt-2">
-                    {{ 'Törlés' if lang=='hu' else 'Delete' }}
-                </a>
+    {% for item in movie_data %}
+        {% set movie = item.movie %}
+        {% set rating = item.rating %}
+
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="card movie-card shadow-sm border-0 h-100">
+
+                <!-- POSTER -->
+                {% if movie.poster_path %}
+                    <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}"
+                         class="card-img-top movie-poster"
+                         alt="{{ movie.title }}">
+                {% else %}
+                    <div class="bg-secondary text-white text-center py-5">
+                        No Image
+                    </div>
+                {% endif %}
+
+                <div class="card-body d-flex flex-column">
+                    <h6 class="card-title fw-bold">{{ movie.title }}</h6>
+
+                    <!-- SAJÁT ÉRTÉKELÉS -->
+                    <p class="mb-2 fw-semibold text-dark">
+                        ⭐ {{ rating }}/10
+                    </p>
+
+                    <!-- Részletek -->
+                    <a href="{{ url_for('main.movie_details', movie_id=movie.id) }}"
+                       class="btn btn-dark mb-2">
+                        {{ 'Részletek' if lang=='hu' else 'Details' }}
+                    </a>
+
+                    <!-- Értékelés törlése -->
+                    <a href="{{ url_for('user.remove_rating', movie_id=movie.id) }}"
+                       class="btn btn-outline-danger mt-auto">
+                        {{ 'Törlés' if lang=='hu' else 'Delete Rating' }}
+                    </a>
+                </div>
+
             </div>
         </div>
-    </div>
-{% endfor %}
+
+    {% endfor %}
+
 </div>
 
 {% endblock %}

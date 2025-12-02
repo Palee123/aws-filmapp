@@ -1,22 +1,53 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h3>{{ 'Keresés' if lang=='hu' else 'Search Movies' }}</h3>
+<div class="d-flex justify-content-center">
+    <div class="card shadow-sm p-4" style="max-width: 500px; width: 100%;">
 
-<form action="{{ url_for('main.search_results') }}" method="GET" class="mb-3">
+        <h3 class="fw-bold text-center mb-4">
+            {{ 'Keresés' if lang=='hu' else 'Search' }}
+        </h3>
 
-    <input type="text" name="query" placeholder="{{ 'Keresés...' if lang=='hu' else 'Search...' }}" 
-           class="form-control mb-3">
+        <!-- SEARCH FORM -->
+        <form method="GET" action="{{ url_for('main.search_results') }}">
 
-    <select name="genre" class="form-control mb-3">
-        <option value="0">{{ 'Összes műfaj' if lang=='hu' else 'All genres' }}</option>
+            <!-- TEXT SEARCH -->
+            <div class="mb-3">
+                <label class="form-label">
+                    {{ 'Film címe' if lang=='hu' else 'Movie title' }}
+                </label>
+                <input
+                    type="text"
+                    class="form-control"
+                    name="query"
+                    placeholder="{{ 'Írd be a film címét...' if lang=='hu' else 'Enter movie title...' }}"
+                >
+            </div>
 
-        {% for g in genres %}
-            <option value="{{ g.id }}">{{ g.name }}</option>
-        {% endfor %}
-    </select>
+            <!-- GENRE DROPDOWN -->
+            <div class="mb-3">
+                <label class="form-label">
+                    {{ 'Műfaj (opcionális)' if lang=='hu' else 'Genre (optional)' }}
+                </label>
+                <select class="form-select" name="genre">
+                    <option value="0">
+                        {{ 'Bármely műfaj' if lang=='hu' else 'Any genre' }}
+                    </option>
 
-    <button class="btn btn-primary">{{ 'Keresés' if lang=='hu' else 'Search' }}</button>
-</form>
+                    {% for g in genres %}
+                        <option value="{{ g.id }}">{{ g.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- SEARCH BUTTON -->
+            <button class="btn btn-dark w-100 mt-3">
+                {{ 'Keresés' if lang=='hu' else 'Search' }}
+            </button>
+
+        </form>
+
+    </div>
+</div>
 
 {% endblock %}

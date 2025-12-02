@@ -1,52 +1,101 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>{{ movie.title }}</h2>
+{% set t = 'hu' if lang=='hu' else 'en' %}
 
-{% if poster %}
-    <img src="{{ poster }}" class="img-fluid mb-3">
-{% endif %}
+<div class="row g-4">
 
-<p>{{ movie.overview }}</p>
+    <!-- POSTER -->
+    <div class="col-md-4 text-center">
+        {% if poster %}
+        <img src="{{ poster }}" alt="{{ movie.title }}"
+             class="img-fluid rounded shadow-lg movie-detail-poster">
+        {% else %}
+        <div class="bg-secondary text-white py-5 rounded">
+            No Image
+        </div>
+        {% endif %}
+    </div>
 
-<hr>
+    <!-- MOVIE INFO -->
+    <div class="col-md-8">
 
-<h4>{{ 'Értékelés' if lang=='hu' else 'Rating' }}</h4>
+        <h2 class="fw-bold mb-3">{{ movie.title }}</h2>
 
-{% if current_user.is_authenticated %}
+        <!-- RATING -->
+        <p class="mb-1 text-muted">
+            ⭐ {{ movie.vote_average }}/10  
+            <span class="ms-2">
+                {{ movie.vote_count }} {{ 'szavazat' if t=='hu' else 'votes' }}
+            </span>
+        </p>
 
-<form action="{{ url_for('user.rate_movie', movie_id=movie.id) }}" method="POST">
-    <select name="rating" class="form-control mb-2">
-        {% for r in range(1, 11) %}
-            <option value="{{ r }}" {% if user_rating == r %}selected{% endif %}>{{ r }}</option>
-        {% endfor %}
-    </select>
+        <p><strong>{{ 'Megjelenés dátuma' if t=='hu' else 'Release date' }}:</strong>
+            {{ movie.release_date }}
+        </p>
 
-    <button class="btn btn-success">{{ 'Mentés' if lang=='hu' else 'Save' }}</button>
-</form>
+        <p class="text-muted">{{ movie.overview }}</p>
 
-{% if user_rating %}
-<a href="{{ url_for('user.remove_rating', movie_id=movie.id) }}" class="btn btn-danger mt-2">
-    {{ 'Értékelés törlése' if lang=='hu' else 'Remove rating' }}
-</a>
-{% endif %}
+        <hr>
 
-<hr>
+        <!-- USER RATING -->
+        {% if current_user.is_authenticated %}
+        <h5 class="fw-bold mt-4">
+            {{ 'Értékelésem' if t=='hu' else 'My Rating' }}
+        </h5>
 
-<h4>{{ 'Kedvencek' if lang=='hu' else 'Favorites' }}</h4>
+        <!-- Rating form -->
+        <form action="{{ url_for('user.rate_movie', movie_id=movie.id) }}" method="POST" class="d-flex align-items-center gap-2">
 
-{% if is_favorite %}
-    <a href="{{ url_for('user.remove_favorite', movie_id=movie.id) }}" class="btn btn-warning">
-        {{ 'Eltávolítás' if lang=='hu' else 'Remove' }}
-    </a>
-{% else %}
-    <a href="{{ url_for('user.add_favorite', movie_id=movie.id) }}" class="btn btn-primary">
-        {{ 'Hozzáadás' if lang=='hu' else 'Add to favorites' }}
-    </a>
-{% endif %}
+            <select name="rating" class="form-select w-auto">
+                {% for i in range(1,11) %}
+                <option value="{{ i }}" {% if user_rating==i %}selected{% endif %}>
+                    {{ i }}
+                </option>
+                {% endfor %}
+            </select>
 
-{% else %}
-<p>{{ 'Jelentkezz be az értékeléshez!' if lang=='hu' else 'Login to rate.' }}</p>
-{% endif %}
+            <button class="btn btn-dark">
+                {{ 'Mentés' if t=='hu' else 'Save' }}
+            </button>
+
+            {% if user_rating %}
+            <a href="{{ url_for('user.remove_rating', movie_id=movie.id) }}"
+               class="btn btn-outline-danger">
+                {{ 'Törlés' if t=='hu' else 'Remove' }}
+            </a>
+            {% endif %}
+        </form>
+        {% endif %}
+
+
+        <!-- FAVORITES -->
+        <div class="mt-4">
+            {% if current_user.is_authenticated %}
+                {% if is_favorite %}
+                    <a href="{{ url_for('user.remove_favorite', movie_id=movie.id) }}"
+                       class="btn btn-warning">
+                        ⭐ {{ 'Kedvencekből törlés' if t=='hu' else 'Remove from favorites' }}
+                    </a>
+                {% else %}
+                    <a href="{{ url_for('user.add_favorite', movie_id=movie.id) }}"
+                       class="btn btn-success">
+                        ⭐ {{ 'Hozzáadás a kedvencekhez' if t=='hu' else 'Add to favorites' }}
+                    </a>
+                {% endif %}
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+
+<style>
+/* Poster styling */
+.movie-detail-poster {
+    border-radius: 12px;
+    max-height: 550px;
+    object-fit: cover;
+}
+</style>
 
 {% endblock %}

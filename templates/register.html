@@ -1,24 +1,64 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h3>{{ 'Regisztráció' if lang=='hu' else 'Registration' }}</h3>
 
-<form method="POST">
-    <div class="mb-3">
-        <label>{{ 'Felhasználónév' if lang=='hu' else 'Username' }}</label>
-        <input name="username" class="form-control">
+<div class="d-flex justify-content-center">
+    <div class="card shadow-sm p-4" style="max-width: 420px; width: 100%;">
+
+        <h3 class="fw-bold text-center mb-4">
+            {{ 'Regisztráció' if lang=='hu' else 'Register' }}
+        </h3>
+
+        <!-- FORM -->
+        <form method="POST" action="{{ url_for('auth.register') }}">
+
+            <!-- USERNAME -->
+            <div class="mb-3">
+                <label class="form-label">
+                    {{ 'Felhasználónév' if lang=='hu' else 'Username' }}
+                </label>
+                <input type="text" name="username" class="form-control"
+                       placeholder="{{ 'Írd be a felhasználónevet...' if lang=='hu' else 'Enter username...' }}"
+                       required>
+            </div>
+
+            <!-- EMAIL -->
+            <div class="mb-3">
+                <label class="form-label">
+                    {{ 'Email cím' if lang=='hu' else 'Email address' }}
+                </label>
+                <input type="email" name="email" class="form-control"
+                       placeholder="{{ 'Írd be az email címed...' if lang=='hu' else 'Enter your email...' }}"
+                       required>
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="mb-3">
+                <label class="form-label">
+                    {{ 'Jelszó' if lang=='hu' else 'Password' }}
+                </label>
+                <input type="password" name="password" class="form-control"
+                       placeholder="{{ 'Írd be a jelszót...' if lang=='hu' else 'Enter password...' }}"
+                       required>
+            </div>
+
+            <!-- SUBMIT BUTTON -->
+            <button class="btn btn-dark w-100 mt-2">
+                {{ 'Regisztráció' if lang=='hu' else 'Register' }}
+            </button>
+
+        </form>
+
+        <hr class="my-4">
+
+        <!-- LOGIN LINK -->
+        <p class="text-center">
+            {{ 'Van már fiókod?' if lang=='hu' else 'Already have an account?' }}
+            <a href="{{ url_for('auth.login') }}" class="fw-bold">
+                {{ 'Jelentkezz be!' if lang=='hu' else 'Login here!' }}
+            </a>
+        </p>
+
     </div>
+</div>
 
-    <div class="mb-3">
-        <label>Email</label>
-        <input name="email" type="email" class="form-control">
-    </div>
-
-    <div class="mb-3">
-        <label>{{ 'Jelszó' if lang=='hu' else 'Password' }}</label>
-        <input name="password" type="password" class="form-control">
-    </div>
-
-    <button class="btn btn-success">{{ 'Regisztráció' if lang=='hu' else 'Sign Up' }}</button>
-</form>
 {% endblock %}

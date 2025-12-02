@@ -1,31 +1,60 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h3>{{ 'Kedvenceim' if lang=='hu' else 'My Favorites' }}</h3>
+<h2 class="fw-bold mb-4">
+    {{ 'Kedvenceim' if lang=='hu' else 'My Favorites' }}
+</h2>
 
-<div class="row">
+<!-- Ha nincs kedvenc -->
+{% if movies|length == 0 %}
+<div class="alert alert-info text-center py-4">
+    {{ 'Még nincs kedvenc film hozzáadva.' if lang=='hu'
+       else 'You have no favorite movies yet.' }}
+</div>
+{% endif %}
+
+<!-- FILM GRID -->
+<div class="row g-4">
+
     {% for movie in movies %}
-        <div class="col-md-3 mb-4">
-            <div class="card">
-                {% if movie.poster_path %}
-                    <img src="{{ image_base }}{{ movie.poster_path }}" class="card-img-top">
-                {% endif %}
-                <div class="card-body">
-                    <h5>{{ movie.title }}</h5>
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="card movie-card shadow-sm border-0 h-100">
 
+                <!-- POSTER -->
+                {% if movie.poster_path %}
+                    <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}"
+                         class="card-img-top movie-poster"
+                         alt="{{ movie.title }}">
+                {% else %}
+                    <div class="bg-secondary text-white text-center py-5">
+                        No Image
+                    </div>
+                {% endif %}
+
+                <div class="card-body d-flex flex-column">
+                    <h6 class="card-title fw-bold">{{ movie.title }}</h6>
+
+                    <p class="text-muted small mb-2">
+                        ⭐ {{ movie.vote_average }}
+                    </p>
+
+                    <!-- Részletek -->
                     <a href="{{ url_for('main.movie_details', movie_id=movie.id) }}"
-                       class="btn btn-primary mb-2">
-                       {{ 'Részletek' if lang=='hu' else 'Details' }}
+                       class="btn btn-dark mb-2">
+                        {{ 'Részletek' if lang=='hu' else 'Details' }}
                     </a>
 
-                    <a href="{{ url_for('user.remove_favorite', movie_id=movie.id) }}" 
-                       class="btn btn-danger">
-                       {{ 'Törlés' if lang=='hu' else 'Remove' }}
+                    <!-- Kedvencekből törlés -->
+                    <a href="{{ url_for('user.remove_favorite', movie_id=movie.id) }}"
+                       class="btn btn-outline-danger mt-auto">
+                        {{ 'Törlés' if lang=='hu' else 'Remove' }}
                     </a>
                 </div>
+
             </div>
         </div>
     {% endfor %}
+
 </div>
 
 {% endblock %}

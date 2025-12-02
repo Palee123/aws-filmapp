@@ -1,0 +1,58 @@
+/* Alap beállítások */
+body {
+    background-color: #f8f9fa;
+}
+
+/* ---------------------------------------------------
+   MOVIE CARDS – modern hover + shadow + smooth UX
+--------------------------------------------------- */
+
+.movie-card {
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.movie-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.18);
+}
+
+/* Poster kép animáció */
+.movie-poster {
+    transition: transform .3s ease;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.movie-card:hover .movie-poster {
+    transform: scale(1.05);
+}
+
+/* Card title */
+.card-title {
+    font-size: 0.95rem;
+    line-height: 1.2;
+}
+
+/* Buttons */
+.btn-dark {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 6px 10px;
+}
+
+/* Törzsszöveg és spacing */
+.card-body {
+    padding: 15px;
+}
+
+/* Responsive finomhangolás */
+@media (max-width: 576px) {
+    .card-title {
+        font-size: 0.85rem;
+    }
+
+    .movie-card {
+        border-radius: 8px;
+    }
+}

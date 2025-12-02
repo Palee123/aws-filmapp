@@ -1,27 +1,64 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h2 class="mb-3">{{ 'Népszerű filmek' if not searching and lang=='hu' else '' }}</h2>
 
-<div class="row">
+<!-- CÍMSOR -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    {% if searching %}
+        <h2 class="fw-bold">{{ 'Keresési találatok' if lang=='hu' else 'Search results' }}</h2>
+        <span class="text-muted">
+            {{ search_query }}
+        </span>
+    {% else %}
+        <h2 class="fw-bold">{{ 'Népszerű filmek' if lang=='hu' else 'Popular Movies' }}</h2>
+    {% endif %}
+</div>
+
+
+<!-- ÜRES TALÁLAT ESETÉN -->
+{% if movies|length == 0 %}
+<div class="alert alert-warning text-center py-4">
+    {{ 'Nincs találat.' if lang=='hu' else 'No results found.' }}
+</div>
+{% endif %}
+
+
+<!-- FILM GRID -->
+<div class="row g-4">
+
     {% for movie in movies %}
-        <div class="col-md-3 mb-4">
-            <div class="card">
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="card movie-card shadow-sm border-0 h-100">
 
+                <!-- POSTER -->
                 {% if movie.poster_path %}
-                    <img src="{{ image_base }}{{ movie.poster_path }}" class="card-img-top">
+                    <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}"
+                         class="card-img-top movie-poster"
+                         alt="{{ movie.title }}">
+                {% else %}
+                    <div class="bg-secondary text-white text-center py-5">
+                        No Image
+                    </div>
                 {% endif %}
 
-                <div class="card-body">
-                    <h5 class="card-title">{{ movie.title }}</h5>
+                <!-- CARD BODY -->
+                <div class="card-body d-flex flex-column">
+                    <h6 class="card-title fw-bold">{{ movie.title }}</h6>
 
-                    <a href="{{ url_for('main.movie_details', movie_id=movie.id) }}" 
-                       class="btn btn-primary">
+                    <p class="text-muted small mb-2">
+                        ⭐ {{ movie.vote_average }}
+                    </p>
+
+                    <!-- GOMB -->
+                    <a href="{{ url_for('main.movie_details', movie_id=movie.id) }}"
+                       class="btn btn-dark mt-auto">
                         {{ 'Részletek' if lang=='hu' else 'Details' }}
                     </a>
                 </div>
+
             </div>
         </div>
     {% endfor %}
+
 </div>
+
 {% endblock %}
