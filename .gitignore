@@ -1,0 +1,7 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Ignore all .txt files
+*.txt
+tmdb_key.txt

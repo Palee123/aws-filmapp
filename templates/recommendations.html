@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h3>{{ 'Kedvenceim' if lang=='hu' else 'My Favorites' }}</h3>
+<h3>{{ 'Ajánlott filmek' if lang=='hu' else 'Recommended movies' }}</h3>
 
 <div class="row">
     {% for movie in movies %}
@@ -14,13 +14,8 @@
                     <h5>{{ movie.title }}</h5>
 
                     <a href="{{ url_for('main.movie_details', movie_id=movie.id) }}"
-                       class="btn btn-primary mb-2">
+                       class="btn btn-primary">
                        {{ 'Részletek' if lang=='hu' else 'Details' }}
-                    </a>
-
-                    <a href="{{ url_for('user.remove_favorite', movie_id=movie.id) }}" 
-                       class="btn btn-danger">
-                       {{ 'Törlés' if lang=='hu' else 'Remove' }}
                     </a>
                 </div>
             </div>

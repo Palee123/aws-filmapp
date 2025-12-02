@@ -1,83 +1,100 @@
 <!DOCTYPE html>
-<html lang="hu">
+<html lang="{{ lang }}">
 <head>
     <meta charset="UTF-8">
-    <title>Movie App</title>
-
-    <!-- Bootstrap CDN -->
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-
+    <title>MovieApp</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container">
 
-        <a class="navbar-brand" href="{{ url_for('index') }}">MovieApp</a>
+        <a class="navbar-brand" href="{{ url_for('main.index') }}">MovieApp</a>
 
-        <div class="d-flex ms-auto">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <!-- Login / Logout / Favorites / My Ratings -->
-            <ul class="navbar-nav me-3">
+        <div class="collapse navbar-collapse" id="navbarNav">
 
-                {% if current_user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('logout') }}">
-                            {% if lang == 'hu' %}Kijelentkezés{% else %}Logout{% endif %}
-                        </a>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('login') }}">
-                            {% if lang == 'hu' %}Bejelentkezés{% else %}Login{% endif %}
-                        </a>
-                    </li>
-                {% endif %}
+            <ul class="navbar-nav me-auto">
 
-                {% if current_user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('favorites') }}">
-                            {% if lang == 'hu' %}Kedvencek{% else %}Favorites{% endif %}
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('my_ratings') }}">
-                            {% if lang == 'hu' %}Értékeléseim{% else %}My Ratings{% endif %}
-                        </a>
-                    </li>
-                {% endif %}
-
-            </ul>
-
-            <!-- Language selector -->
-            <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link {% if lang == 'hu' %}active{% endif %}"
-                       href="{{ url_for('set_language', lang='hu') }}">
-                        HU
+                    <a class="nav-link" href="{{ url_for('main.search') }}">
+                        {{ 'Keresés' if lang=='hu' else 'Search' }}
                     </a>
                 </li>
+
+                {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('user.favorites') }}">
+                            {{ 'Kedvencek' if lang=='hu' else 'Favorites' }}
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('user.my_ratings') }}">
+                            {{ 'Értékeléseim' if lang=='hu' else 'My Ratings' }}
+                        </a>
+                    </li>
+
+                   <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('user.recommendations') }}">
+                            {{ 'Ajánlások' if lang=='hu' else 'Recommendations' }}
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+
+            <ul class="navbar-nav">
+                {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link text-warning">{{ current_user.username }}</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.logout') }}">
+                            {{ 'Kijelentkezés' if lang=='hu' else 'Logout' }}
+                        </a>
+                    </li>
+
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">
+                            {{ 'Bejelentkezés' if lang=='hu' else 'Login' }}
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.register') }}">
+                            {{ 'Regisztráció' if lang=='hu' else 'Sign Up' }}
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+
+            <!-- Nyelvváltó -->
+            <ul class="navbar-nav ms-3">
                 <li class="nav-item">
-                    <a class="nav-link {% if lang == 'en' %}active{% endif %}"
-                       href="{{ url_for('set_language', lang='en') }}">
-                        EN
-                    </a>
+                    <a class="nav-link" href="{{ url_for('main.set_language', lang='hu') }}">HU</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('main.set_language', lang='en') }}">EN</a>
                 </li>
             </ul>
 
         </div>
-
     </div>
 </nav>
 
-<div class="container mt-4">
 
-    {% with messages = get_flashed_messages(with_categories=True) %}
+<div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-            {% for category, msg in messages %}
-                <div class="alert alert-{{ category }}">{{ msg }}</div>
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
             {% endfor %}
         {% endif %}
     {% endwith %}

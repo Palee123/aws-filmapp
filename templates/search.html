@@ -1,39 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>
-    {% if lang == 'hu' %}Filmek keresése{% else %}Search movies{% endif %}
-</h2>
+<h3>{{ 'Keresés' if lang=='hu' else 'Search Movies' }}</h3>
 
-<form method="GET" action="{{ url_for('search_results') }}">
+<form action="{{ url_for('main.search_results') }}" method="GET" class="mb-3">
 
-    <div class="mb-3">
-        <label>
-            {% if lang == 'hu' %}Film címe:{% else %}Movie title:{% endif %}
-        </label>
-        <input type="text" name="query" class="form-control"
-               placeholder="{% if lang=='hu' %}Írj be egy filmcímet...{% else %}Type a movie title...{% endif %}">
-    </div>
+    <input type="text" name="query" placeholder="{{ 'Keresés...' if lang=='hu' else 'Search...' }}" 
+           class="form-control mb-3">
 
-    <div class="mb-3">
-        <label>
-            {% if lang == 'hu' %}Műfaj:{% else %}Genre:{% endif %}
-        </label>
-        <select name="genre" class="form-select">
-            <option value="0">
-                {% if lang == 'hu' %}-- Minden műfaj --{% else %}-- All genres --{% endif %}
-            </option>
+    <select name="genre" class="form-control mb-3">
+        <option value="0">{{ 'Összes műfaj' if lang=='hu' else 'All genres' }}</option>
 
-            {% for genre in genres %}
-                <option value="{{ genre.id }}">{{ genre.name }}</option>
-            {% endfor %}
-        </select>
-    </div>
+        {% for g in genres %}
+            <option value="{{ g.id }}">{{ g.name }}</option>
+        {% endfor %}
+    </select>
 
-    <button class="btn btn-primary">
-        {% if lang == 'hu' %}Keresés{% else %}Search{% endif %}
-    </button>
-
+    <button class="btn btn-primary">{{ 'Keresés' if lang=='hu' else 'Search' }}</button>
 </form>
 
 {% endblock %}

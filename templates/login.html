@@ -1,44 +1,26 @@
 {% extends "base.html" %}
-{% block content %}
 
-<h2>
-    {% if lang == 'hu' %}Bejelentkezés{% else %}Login{% endif %}
-</h2>
+{% block content %}
+<h3>{{ 'Bejelentkezés' if lang=='hu' else 'Login' }}</h3>
 
 <form method="POST">
-
     <div class="mb-3">
-        <label>
-            {% if lang == 'hu' %}
-                Felhasználónév vagy Email:
-            {% else %}
-                Username or Email:
-            {% endif %}
-        </label>
-        <input type="text" name="username" class="form-control" required>
+        <label>{{ 'Felhasználónév vagy Email' if lang=='hu' else 'Username or Email' }}</label>
+        <input type="text" class="form-control" name="username">
     </div>
 
     <div class="mb-3">
-        <label>
-            {% if lang == 'hu' %}Jelszó:{% else %}Password:{% endif %}
-        </label>
-        <input type="password" name="password" class="form-control" required>
+        <label>{{ 'Jelszó' if lang=='hu' else 'Password' }}</label>
+        <input type="password" class="form-control" name="password">
     </div>
 
-    <button type="submit" class="btn btn-success">
-        {% if lang == 'hu' %}Bejelentkezés{% else %}Login{% endif %}
-    </button>
-
+    <button class="btn btn-primary">{{ 'Belépés' if lang=='hu' else 'Login' }}</button>
 </form>
 
 <p class="mt-3">
-    {% if lang == 'hu' %}
-        Nincs fiókod?
-        <a href="{{ url_for('register') }}">Regisztrálj itt</a>.
-    {% else %}
-        Don't have an account?
-        <a href="{{ url_for('register') }}">Register here</a>.
-    {% endif %}
+    <a href="{{ url_for('auth.register') }}">
+        {{ 'Nincs fiókod? Regisztrálj!' if lang=='hu' else 'No account? Sign up!' }}
+    </a>
 </p>
 
 {% endblock %}
