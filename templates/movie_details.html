@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>{{ movie.title }}</h2>
+
+<div class="row mt-4">
+
+    <div class="col-md-4">
+        {% if poster %}
+            <img src="{{ poster }}" class="img-fluid rounded">
+        {% else %}
+            <p>Nincs kép</p>
+        {% endif %}
+    </div>
+
+    <div class="col-md-8">
+
+        <p><strong>Megjelenés dátuma:</strong> {{ movie.release_date }}</p>
+        <p><strong>Leírás:</strong> {{ movie.overview }}</p>
+
+        {% if avg_rating %}
+            <p><strong>Átlagos értékelés:</strong> {{ "%.1f"|format(avg_rating) }}/10</p>
+        {% else %}
+            <p><strong>Átlagos értékelés:</strong> nincs</p>
+        {% endif %}
+
+        <hr>
+
+        <!-- Értékelés -->
+        {% if current_user.is_authenticated %}
+            <form method="POST" action="{{ url_for('rate_movie', movie_id=movie.id) }}">
+                <label><strong>Your rating:</strong></label>
+                <select name="rating" class="form-select w-25">
+                    {% for i in range(1, 11) %}
+                        <option value="{{ i }}" {% if user_rating == i %}selected{% endif %}>
+                            {{ i }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button class="btn btn-success mt-2">Értékelés</button>
+            </form>
+
+            <hr>
+
+            <!-- Kedvencek -->
+            {% if is_favorite %}
+                <a href="{{ url_for('remove_favorite', movie_id=movie.id) }}"
+                class="btn btn-danger mt-2">
+                    {% if lang == 'hu' %}Eltávolítás kedvencekből{% else %}Remove from favorites{% endif %}
+                </a>
+            {% else %}
+                <a href="{{ url_for('add_favorite', movie_id=movie.id) }}"
+                class="btn btn-warning mt-2">
+                    {% if lang == 'hu' %}Hozzáadás a kedvencekhez{% else %}Add to favorites{% endif %}
+                </a>
+            {% endif %}
+        {% else %}
+            <p><em>Értékeléshez és kedvencekhez jelentkezz be.</em></p>
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

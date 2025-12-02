@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 class="mb-4">
+    {% if lang == 'hu' %}Népszerű filmek{% else %}Popular Movies{% endif %}
+</h2>
+
+<div class="row row-cols-1 row-cols-md-4 g-4">
+
+    {% for movie in movies %}
+    <div class="col">
+        <div class="card h-100">
+
+            {% if movie.poster_path %}
+                <img src="{{ image_base }}{{ movie.poster_path }}" class="card-img-top">
+            {% else %}
+                <img src="https://via.placeholder.com/500x750?text={% if lang=='hu' %}Nincs+kép{% else %}No+image{% endif %}" class="card-img-top">
+            {% endif %}
+
+            <div class="card-body">
+                <h5 class="card-title">{{ movie.title }}</h5>
+                <p class="card-text">{{ movie.release_date }}</p>
+
+                <a href="{{ url_for('movie_details', movie_id=movie.id) }}"
+                   class="btn btn-primary">
+                    {% if lang == 'hu' %}Részletek{% else %}Details{% endif %}
+                </a>
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
+
+<hr class="mt-5">
+
+<h3>
+    {% if lang == 'hu' %}Böngéssz tovább{% else %}Browse more{% endif %}
+</h3>
+<a href="{{ url_for('search') }}" class="btn btn-secondary mt-2">
+    {% if lang == 'hu' %}Film keresése{% else %}Search movies{% endif %}
+</a>
+
+{% endblock %}

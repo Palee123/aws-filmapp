@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>
+    {% if lang == 'hu' %}Filmek keresése{% else %}Search movies{% endif %}
+</h2>
+
+<form method="GET" action="{{ url_for('search_results') }}">
+
+    <div class="mb-3">
+        <label>
+            {% if lang == 'hu' %}Film címe:{% else %}Movie title:{% endif %}
+        </label>
+        <input type="text" name="query" class="form-control"
+               placeholder="{% if lang=='hu' %}Írj be egy filmcímet...{% else %}Type a movie title...{% endif %}">
+    </div>
+
+    <div class="mb-3">
+        <label>
+            {% if lang == 'hu' %}Műfaj:{% else %}Genre:{% endif %}
+        </label>
+        <select name="genre" class="form-select">
+            <option value="0">
+                {% if lang == 'hu' %}-- Minden műfaj --{% else %}-- All genres --{% endif %}
+            </option>
+
+            {% for genre in genres %}
+                <option value="{{ genre.id }}">{{ genre.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <button class="btn btn-primary">
+        {% if lang == 'hu' %}Keresés{% else %}Search{% endif %}
+    </button>
+
+</form>
+
+{% endblock %}

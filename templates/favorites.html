@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>
+    {% if lang == 'hu' %}Kedvenc filmjeim{% else %}My Favorite Movies{% endif %}
+</h2>
+
+{% if movies %}
+<div class="row row-cols-1 row-cols-md-4 g-4">
+
+    {% for movie in movies %}
+    <div class="col">
+        <div class="card h-100">
+
+            {% if movie.poster_path %}
+                <img src="{{ image_base }}{{ movie.poster_path }}" class="card-img-top">
+            {% else %}
+                <img src="https://via.placeholder.com/500x750?text={% if lang=='hu' %}Nincs+kép{% else %}No+image{% endif %}"
+                     class="card-img-top">
+            {% endif %}
+
+            <div class="card-body">
+                <h5 class="card-title">{{ movie.title }}</h5>
+
+                <a href="{{ url_for('movie_details', movie_id=movie.id) }}"
+                   class="btn btn-primary mt-2">
+                    {% if lang == 'hu' %}Részletek{% else %}Details{% endif %}
+                </a>
+
+                <a href="{{ url_for('remove_favorite', movie_id=movie.id) }}"
+                   class="btn btn-danger mt-2">
+                    {% if lang == 'hu' %}Eltávolítás{% else %}Remove{% endif %}
+                </a>
+
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
+
+{% else %}
+<p>
+    {% if lang == 'hu' %}
+        Nincs kedvenc film.
+    {% else %}
+        No favorite movies.
+    {% endif %}
+</p>
+{% endif %}
+
+{% endblock %}
