@@ -89,7 +89,12 @@ def search_results():
         genre_id = int(genre_id)
         results = [m for m in results if genre_id in m.get("genre_ids", [])]
 
-    return render_template("search_results.html", results=results)
+    return render_template(
+    "search_results.html",
+    results=results,
+    image_base="https://image.tmdb.org/t/p/w500"
+    )
+
 
 
 # -------------------------------------------------------------------

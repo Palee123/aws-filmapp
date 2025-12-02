@@ -1,40 +1,33 @@
 {% extends "base.html" %}
+
 {% block content %}
 
-<h3 class="fw-bold text-center mb-4">
-    {{ 'Keresési eredmények' if lang=='hu' else 'Search Results' }}
-</h3>
+<h2 class="text-center mb-4">
+    {{ 'Keresési eredmények' if lang=='hu' else 'Search results' }}
+</h2>
 
-{% if results|length == 0 %}
-    <p class="text-center fs-5 text-muted">
-        {{ 'Nincs találat.' if lang=='hu' else 'No results found.' }}
-    </p>
-{% else %}
-
-<!-- FILM GRID -->
 <div class="row g-4">
 
     {% for movie in results %}
-    <div class="col-6 col-md-4 col-lg-3 col-xl-2">
 
-        <a href="{{ url_for('main.movie_details', movie_id=movie.id) }}"
+    <div class="col-6 col-md-4 col-lg-3">
+        <a href="{{ url_for('main.movie_details', movie_id=movie.id) }}" 
            class="text-decoration-none text-dark">
 
-            <div class="card h-100 shadow-sm border-0 movie-card">
+            <div class="card shadow-sm h-100">
 
                 {% if movie.poster_path %}
-                <img src="{{ image_base }}{{ movie.poster_path }}"
-                     class="card-img-top"
-                     alt="{{ movie.title }}">
+                    <img src="{{ image_base }}{{ movie.poster_path }}" 
+                         class="card-img-top"
+                         alt="{{ movie.title }}">
                 {% else %}
-                <div class="d-flex align-items-center justify-content-center bg-light"
-                     style="height: 260px; font-size: 14px;">
-                    {{ 'Nincs kép' if lang=='hu' else 'No image' }}
-                </div>
+                    <div class="bg-secondary text-white text-center py-5">
+                        Nincs kép
+                    </div>
                 {% endif %}
 
                 <div class="card-body">
-                    <h6 class="card-title fw-bold small text-center">
+                    <h6 class="text-center fw-bold">
                         {{ movie.title }}
                     </h6>
                 </div>
@@ -42,24 +35,10 @@
             </div>
 
         </a>
-
     </div>
+
     {% endfor %}
 
 </div>
-
-{% endif %}
-
-<style>
-/* Hover animáció */
-.movie-card {
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.movie-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-}
-</style>
 
 {% endblock %}
