@@ -2,21 +2,20 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, logout_user, login_required
 from models import db, User
 
-auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
+auth_bp = Blueprint("auth", __name__)
 
 
-# ────────────────────────────────────────────────
+# -------------------------------------------------------------------
 # REGISZTRÁCIÓ
-# ────────────────────────────────────────────────
-
+# -------------------------------------------------------------------
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        username = request.form.get("username")
-        email = request.form.get("email")
+        username = request.form.get("username").strip()
+        email = request.form.get("email").strip()
         password = request.form.get("password")
 
-        # Ellenőrzés, hogy létezik-e
+        # már létezik ilyen user?
         existing = User.query.filter(
             (User.username == username) | (User.email == email)
         ).first()
@@ -25,7 +24,7 @@ def register():
             flash("Ez a felhasználónév vagy email már létezik!", "danger")
             return redirect(url_for("auth.register"))
 
-        # Új user létrehozása
+        # új user
         new_user = User(username=username, email=email)
         new_user.set_password(password)
 
@@ -38,10 +37,9 @@ def register():
     return render_template("register.html")
 
 
-# ────────────────────────────────────────────────
+# -------------------------------------------------------------------
 # BEJELENTKEZÉS
-# ────────────────────────────────────────────────
-
+# -------------------------------------------------------------------
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -57,16 +55,15 @@ def login():
             login_user(user)
             flash("Sikeres bejelentkezés!", "success")
             return redirect(url_for("main.index"))
-        else:
-            flash("Hibás adatok!", "danger")
+
+        flash("Hibás bejelentkezési adatok!", "danger")
 
     return render_template("login.html")
 
 
-# ────────────────────────────────────────────────
+# -------------------------------------------------------------------
 # KIJELENTKEZÉS
-# ────────────────────────────────────────────────
-
+# -------------------------------------------------------------------
 @auth_bp.route("/logout")
 @login_required
 def logout():

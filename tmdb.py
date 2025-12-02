@@ -1,78 +1,79 @@
+import os
 import requests
-from flask import current_app, session
+from flask import session
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+tmdb_key_path = os.path.join(BASE_DIR, "tmdb_key.txt")
+
+with open(tmdb_key_path, "r", encoding="utf-8") as f:
+    TMDB_API_KEY = f.read().strip()
 
 TMDB_BASE_URL = "https://api.themoviedb.org/3"
-IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500"
 
-
-# ────────────────────────────────────────────────
-# Nyelv lekérése
-# ────────────────────────────────────────────────
 
 def get_tmdb_language():
-    lang = session.get("lang", "hu")
-    return "en-US" if lang == "en" else "hu-HU"
+    #Nyelvkód a session alapján.
+    return "hu-HU" if session.get("lang", "hu") == "hu" else "en-US"
 
 
-# ────────────────────────────────────────────────
-# Népszerű filmek
-# ────────────────────────────────────────────────
+def safe_tmdb_request(endpoint, params=None, fallback=None):
+    #Biztonságos API wrapper nem dob hibát
+    if params is None:
+        params = {}
 
+    url = f"{TMDB_BASE_URL}/{endpoint}"
+    params.update({"api_key": TMDB_API_KEY})
+
+    try:
+        response = requests.get(url, params=params, timeout=5)
+        return response.json()
+    except Exception:
+        return fallback or {}
+
+
+# ---------------------------------------------------------
+# POPULAR MOVIES
+# ---------------------------------------------------------
 def get_popular_movies():
-    url = f"{TMDB_BASE_URL}/movie/popular"
-    params = {
-        "api_key": current_app.config["TMDB_API_KEY"],
-        "language": get_tmdb_language(),
-        "page": 1
-    }
-    response = requests.get(url, params=params).json()
-    print("POPULAR RAW RESPONSE:", response)  # <---- EZT TEDD BE
-    return response.get("results", [])
+    data = safe_tmdb_request(
+        "movie/popular",
+        params={"language": get_tmdb_language()},
+        fallback={"results": []}
+    )
+    return data.get("results", [])
 
 
-
-# ────────────────────────────────────────────────
-# Film részletei
-# ────────────────────────────────────────────────
-
+# ---------------------------------------------------------
+# MOVIE DETAILS
+# ---------------------------------------------------------
 def get_movie_details(movie_id):
-    url = f"{TMDB_BASE_URL}/movie/{movie_id}"
-    params = {
-        "api_key": current_app.config["TMDB_API_KEY"],
-        "language": get_tmdb_language()
-    }
-    return requests.get(url, params=params).json()
+    data = safe_tmdb_request(
+        f"movie/{movie_id}",
+        params={"language": get_tmdb_language()},
+        fallback={}
+    )
+    return data
 
 
-# ────────────────────────────────────────────────
-# Keresés
-# ────────────────────────────────────────────────
-
-def search_movies(query):
-    url = f"{TMDB_BASE_URL}/search/movie"
-    params = {
-        "api_key": current_app.config["TMDB_API_KEY"],
-        "language": get_tmdb_language(),
-        "query": query
-    }
-    response = requests.get(url, params=params).json()
-    return response.get("results", [])
+# ---------------------------------------------------------
+# SIMILAR MOVIES  ← EZ KELL NEKED
+# ---------------------------------------------------------
+def get_similar_movies(movie_id, limit=10):
+    data = safe_tmdb_request(
+        f"movie/{movie_id}/similar",
+        params={"language": get_tmdb_language()},
+        fallback={"results": []}
+    )
+    return data.get("results", [])[:limit]
 
 
-# ────────────────────────────────────────────────
-# Műfajok lekérése
-# ────────────────────────────────────────────────
-
+# ---------------------------------------------------------
+# GENRE LIST
+# ---------------------------------------------------------
 def get_genres():
-    url = f"{TMDB_BASE_URL}/genre/movie/list"
-    params = {
-        "api_key": current_app.config["TMDB_API_KEY"],
-        "language": get_tmdb_language(),
-    }
-    response = requests.get(url, params=params).json()
-    return response.get("genres", [])
-
-
-# Külső modulok számára is exportáljuk az IMAGE_BASE_URL-t
-def get_image_base():
-    return IMAGE_BASE_URL
+    data = safe_tmdb_request(
+        "genre/movie/list",
+        params={"language": get_tmdb_language()},
+        fallback={"genres": []}
+    )
+    return data.get("genres", [])
