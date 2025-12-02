@@ -21,18 +21,19 @@ def get_similar_movies(movie_id, limit=10):
     url = f"{TMDB_BASE_URL}/movie/{movie_id}/similar"
     params = {
         "api_key": TMDB_API_KEY,
-        "language": get_tmdb_language()
+        "language": "en-US"   # stabil nyelv az ajánlásokhoz
+
     }
     r = requests.get(url, params=params).json()
     return r.get("results", [])[:limit]
 
 
 def recommend_for_user(favorite_movie_ids):
-    """
-    Nagyon egyszerű ajánló:
-      - ha van legalább 1 kedvenc → az első kedvenc filmhez kérünk hasonló filmeket.
-      - ha nincs kedvenc → nincs ajánlás.
-    """
+
+    # Nagyon egyszerű ajánló:
+    #   - ha van legalább 1 kedvenc → az első kedvenc filmhez kérünk hasonló filmeket.
+    #   - ha nincs kedvenc → nincs ajánlás.
+    
     if not favorite_movie_ids:
         return []
 

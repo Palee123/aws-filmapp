@@ -17,18 +17,20 @@ def get_tmdb_language():
 
 
 def safe_tmdb_request(endpoint, params=None, fallback=None):
-    #Biztonságos API wrapper nem dob hibát
     if params is None:
         params = {}
 
-    url = f"{TMDB_BASE_URL}/{endpoint}"
-    params.update({"api_key": TMDB_API_KEY})
+    base_url = "https://api.themoviedb.org/3/"
+    params["api_key"] = TMDB_API_KEY
 
     try:
-        response = requests.get(url, params=params, timeout=5)
-        return response.json()
+        r = requests.get(base_url + endpoint, params=params, timeout=5)
+        if r.status_code != 200:
+            return fallback or {}
+        return r.json()
     except Exception:
         return fallback or {}
+
 
 
 # ---------------------------------------------------------
@@ -61,10 +63,11 @@ def get_movie_details(movie_id):
 def get_similar_movies(movie_id, limit=10):
     data = safe_tmdb_request(
         f"movie/{movie_id}/similar",
-        params={"language": get_tmdb_language()},
+        params={"language": "en-US"},   # FIX: NEM változik nyelvváltáskor
         fallback={"results": []}
     )
     return data.get("results", [])[:limit]
+
 
 
 # ---------------------------------------------------------

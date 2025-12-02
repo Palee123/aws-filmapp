@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, session
 from config import load_config
 from models import db, User, Rating, Favorite
 from routes.main_routes import main_bp
@@ -32,7 +32,11 @@ def create_app():
     # current_user sablonokhoz
     @app.context_processor
     def inject_user():
-        return dict(current_user=current_user)
+        return dict(
+            current_user=current_user,
+            lang=session.get("lang", "hu")
+        )
+
 
     # route blueprintek
     app.register_blueprint(main_bp)
